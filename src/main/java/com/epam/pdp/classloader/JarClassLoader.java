@@ -23,12 +23,6 @@ public class JarClassLoader extends ClassLoader {
 		cacheClasses();
 	}
 
-	/**
-	 * 
-	 * Собственно метод, который и реализует загрузку класса
-	 * 
-	 *
-	 */
 	@Override
 	public synchronized Class<?> loadClass(String name)
 			throws ClassNotFoundException {
@@ -44,10 +38,7 @@ public class JarClassLoader extends ClassLoader {
 	}
 
 	/**
-	 * 
-	 * При создании загрузчика извлекаем все классы из jar и кэшируем в памяти
-	 * 
-	 *
+	 * Retrieve classes from jar file and cache them
 	 */
 	private void cacheClasses() {
 		try {
@@ -55,8 +46,7 @@ public class JarClassLoader extends ClassLoader {
 			Enumeration<JarEntry> entries = jarFile.entries();
 			while (entries.hasMoreElements()) {
 				JarEntry jarEntry = (JarEntry) entries.nextElement();
-				// Одно из назначений хорошего загрузчика - валидация классов на
-				// этапе загрузки
+				/*One of the purpose of the bes classloader is validating on rutime*/
 				if (match(normalize(jarEntry.getName()), packageName)) {
 					byte[] classData = loadClassData(jarFile, jarEntry);
 					if (classData != null) {
@@ -70,18 +60,16 @@ public class JarClassLoader extends ClassLoader {
 				}
 			}
 		} catch (IOException IOE) {
-			// Просто выведем сообщение об ошибке
 			System.out.println(WARNING);
 		}
 	}
 
 	/**
 	 * 
-	 * Получаем каноническое имя класса
+	 * Retrieve canonical name of the class
 	 * 
 	 * @param className
-	 * 
-	 * @return
+	 * @return canonical name of the class
 	 */
 
 	private String stripClassName(String className) {
@@ -89,12 +77,8 @@ public class JarClassLoader extends ClassLoader {
 	}
 
 	/**
-	 * 
-	 * Преобразуем имя в файловой системе в имя класса
-	 * 
-	 * (заменяем слэши на точки)
-	 * 
-	 *
+	 * Transform name of file system into name of the class (exchange slashes to
+	 * dots)
 	 * 
 	 * @param className
 	 * 
@@ -106,18 +90,11 @@ public class JarClassLoader extends ClassLoader {
 	}
 
 	/**
-	 * 
-	 * Валидация класса - проверят принадлежит ли класс заданному пакету и имеет
-	 * ли
-	 * 
-	 * он расширение .class
-	 * 
-	 * 
+	 * Class validation. Checks if class belongs to the package and has .class
+	 * extension
 	 * 
 	 * @param className
-	 * 
 	 * @param packageName
-	 * 
 	 * @return
 	 */
 
@@ -128,17 +105,15 @@ public class JarClassLoader extends ClassLoader {
 
 	/**
 	 * 
-	 * Извлекаем файл из заданного JarEntry
-	 * 
-	 *
+	 * Retrieve file from JarEntry
 	 * 
 	 * @param jarFile
-	 *            - файл jar-архива из которого извлекаем нужный файл
+	 *            -jar file
 	 * 
 	 * @param jarEntry
-	 *            - jar-сущность которую извлекаем
+	 *            - jar entry
 	 * 
-	 * @return null если невозможно прочесть файл
+	 * @return null if cannot read
 	 */
 
 	private byte[] loadClassData(JarFile jarFile, JarEntry jarEntry)
